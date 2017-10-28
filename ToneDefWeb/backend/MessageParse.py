@@ -6,6 +6,7 @@ import json
 import watson_developer_cloud
 from watson_developer_cloud import ToneAnalyzerV3
 from os.path import join, dirname
+from pprint import pprint
 
 tonedef = watson_developer_cloud.ToneAnalyzerV3(
     '2017-10-27',
@@ -13,7 +14,7 @@ tonedef = watson_developer_cloud.ToneAnalyzerV3(
     password='UvaNFrrMqnlH')
 
 messages = open('Lucas', 'r+')
-convo = ""
+convo = []
 
 switch = 0;
 for line in messages:
@@ -23,7 +24,8 @@ for line in messages:
         person = line[:ind]
         mess = line[ind+2:]
         mess = mess[:-1]
-        convo = convo + mess
+        #convo.append({'text': mess, 'user':person})
+        convo.append({'text': mess})
         print(person)
         print(mess)
     else:
@@ -34,14 +36,10 @@ for line in messages:
         print(hour + ':' + minute)
 print convo
 
-print("\ntone_chat() example 1:\n")
-utterances = [{'text': 'I am very happy.', 'user': 'glenn'},
-              {'text': 'It is a good day.', 'user': 'glenn'}]
-print(json.dumps(tonedef.tone_chat(utterances), indent=2))
+print(json.dumps(tonedef.tone_chat(convo), indent=2))
 
-
-with open(join(dirname(__file__), 'tone.json')) as tone_json:
-  tone = tonedef.tone(json.load(tone_json)[convo], tones='emotion',
-    content_type='text/plain')
-
-print(json.dumps(tone, indent=2))
+data = tonedef.tone_chat(convo)
+pprint(data)
+print(tonedef.tone_chat(convo))
+data2 = json.load(tonedef.tone_chat(convo))
+pprint(data)
